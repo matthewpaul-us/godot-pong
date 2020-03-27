@@ -19,7 +19,18 @@ public class GUI : CanvasLayer
 	//  }
 	public void UpdateScore(int playerScore, int enemyScore)
 	{
-		GetNode<Label>("MarginContainer/HBoxContainer/PlayerScore").Text = playerScore.ToString("N0");
-		GetNode<Label>("MarginContainer/HBoxContainer/EnemyScore").Text = enemyScore.ToString("N0");
+		GetNode<Label>("MarginContainer/VBoxContainer/HBoxContainer/PlayerScore").Text = playerScore.ToString("N0");
+		GetNode<Label>("MarginContainer/VBoxContainer/HBoxContainer/EnemyScore").Text = enemyScore.ToString("N0");
+	}
+
+	public async void ShowMessage(string message, float timeToShow = 2)
+	{
+		var label = GetNode<Label>("MarginContainer/VBoxContainer/MessageLabel");
+		label.Text = message;
+		label.Visible = true;
+
+		await ToSignal(GetTree().CreateTimer(timeToShow), "timeout");
+
+		label.Visible = false;
 	}
 }

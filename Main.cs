@@ -32,6 +32,8 @@ public class Main : Node2D
 
 		_gui = GetNode<GUI>("GUI");
 		_gui.UpdateScore(0, 0);
+
+		StartGame();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -45,24 +47,47 @@ public class Main : Node2D
 		if (Input.IsActionJustPressed("reset"))
 		{
 			Reset();
-			_ball.StartGame();
+			StartGame();
 		}
 	}
 
-	private void OnBallLeftScreen(Vector2 position)
+	private async void OnBallLeftScreen(Vector2 position)
 	{
 		if (position.x > _screenSize.x / 2)
+		{
 			_playerScore += 1;
+			_gui.ShowMessage("Player Scored!", 2);
+		}
 		else
+		{
 			_enemyScore += 1;
+			_gui.ShowMessage("Enemy Scored!", 2);
+		}
+
+		await ToSignal(GetTree().CreateTimer(2), "timeout");
 
 		_gui.UpdateScore(_playerScore, _enemyScore);
+
+		Reset();
+		StartGame();
+	}
+
+	public async void StartGame()
+	{
+		_gui.ShowMessage("Ready", 2);
+		await ToSignal(GetTree().CreateTimer(3), "timeout");
+
+		_gui.ShowMessage("Go!", 1);
+
+		_ball.StartGame();
+		_enemy.StartGame();
 	}
 
 	public void Reset()
 	{
+		GD.Print(_ballInitialPosition);
 		_ball.ResetTo(_ballInitialPosition);
-		_enemy.Position = _enemyInitialPosition;
+		_enemy.ResetTo(_enemyInitialPosition);
 		_enemy.Difficulty = _playerScore - _enemyScore;
 	}
 }

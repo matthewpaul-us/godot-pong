@@ -46,7 +46,6 @@ public class Enemy : KinematicBody2D
 
     public void Think(EnemyState state)
     {
-        GD.Print(state);
         switch (state)
         {
             case EnemyState.WaitingForStart:

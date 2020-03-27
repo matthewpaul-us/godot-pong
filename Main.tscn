@@ -35,5 +35,7 @@ BaseSpeed = 100.0
 SpeedMultiplier = 50
 
 [node name="GUI" parent="." instance=ExtResource( 6 )]
+
+[node name="WinSound" type="AudioStreamPlayer" parent="."]
 [connection signal="ChangedPosition" from="Ball" to="Enemy" method="OnBallChangedPosition"]
 [connection signal="LeftScreen" from="Ball" to="." method="OnBallLeftScreen"]

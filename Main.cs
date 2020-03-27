@@ -8,7 +8,6 @@ public class Main : Node2D
 	// private string b = "text";
 
 	private int _playerScore;
-
 	private int _enemyScore;
 
 	private Vector2 _screenSize;

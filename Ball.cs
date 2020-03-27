@@ -3,91 +3,97 @@ using System;
 
 public class Ball : KinematicBody2D
 {
-    // Declare member variables here. Examples:
-    // private int a = 2;
-    // private string b = "text";
+	// Declare member variables here. Examples:
+	// private int a = 2;
+	// private string b = "text";
 
-    [Export]
-    public float Speed;
+	[Export]
+	public float Speed;
 
-    private Random _rand;
+	private Random _rand;
+	private Vector2 _screenSize;
+	private Vector2 _ballSize;
+	private Vector2 _velocity;
+	private AudioStreamPlayer2D _wallSound;
+	private AudioStreamPlayer2D _paddleSound;
 
-    private Vector2 _screenSize;
+	[Signal]
+	public delegate void LeftScreen(Vector2 position);
 
-    private Vector2 _ballSize;
+	[Signal]
+	public delegate void ChangedPosition(Vector2 position);
 
-    private Vector2 _velocity;
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready()
+	{
+		_ballSize = GetNode<ColorRect>("ColorRect").RectSize;
+		_screenSize = GetViewportRect().Size;
 
-    [Signal]
-    public delegate void LeftScreen(Vector2 position);
+		_rand = RandomSingleton.Instance;
 
-    [Signal]
-    public delegate void ChangedPosition(Vector2 position);
+		_wallSound = GetNode<AudioStreamPlayer2D>("BallHitWallSound");
+		_paddleSound = GetNode<AudioStreamPlayer2D>("BallHitPaddleSound");
+	}
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
-        _ballSize = GetNode<ColorRect>("ColorRect").RectSize;
-        _screenSize = GetViewportRect().Size;
+	// Called every frame. 'delta' is the elapsed time since the previous frame.
+	public override void _PhysicsProcess(float delta)
+	{
+		if (Position.y < 0)
+		{
+			_velocity = new Vector2(
+				_velocity.x,
+				Math.Abs(_velocity.y));
+			_wallSound.Play();
+		}
 
-        _rand = RandomSingleton.Instance;
-    }
+		// Off the bottom
+		if (Position.y + _ballSize.y > _screenSize.y)
+		{
+			_velocity = new Vector2(
+				_velocity.x,
+				-Math.Abs(_velocity.y));
+			_wallSound.Play();
+		}
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _PhysicsProcess(float delta)
-    {
-        if (Position.y < 0)
-        {
-            _velocity = new Vector2(
-                _velocity.x,
-                Math.Abs(_velocity.y));
-        }
+		var oldPosition = Position;
 
-        // Off the bottom
-        if (Position.y + _ballSize.y > _screenSize.y)
-        {
-            _velocity = new Vector2(
-                _velocity.x,
-                -Math.Abs(_velocity.y));
-        }
+		KinematicCollision2D collision = MoveAndCollide(_velocity * delta);
 
-        var oldPosition = Position;
+		if (collision != null)
+		{
+			_velocity.x *= -1;
+			_velocity *= 1.1f;
 
-        KinematicCollision2D collision = MoveAndCollide(_velocity * delta);
+			_paddleSound.Play();
+		}
 
-        if (collision != null)
-        {
-            _velocity.x *= -1;
-            _velocity *= 1.1f;
-        }
+		if (Position - oldPosition != Vector2.Zero)
+		{
+			EmitSignal("ChangedPosition", Position);
+		}
+	}
 
-        if (Position - oldPosition != Vector2.Zero)
-        {
-            EmitSignal("ChangedPosition", Position);
-        }
-    }
+	public void ResetTo(Vector2 position)
+	{
+		Position = position;
+		_velocity = Vector2.Zero;
+	}
 
-    public void ResetTo(Vector2 position)
-    {
-        Position = position;
-        _velocity = Vector2.Zero;
-    }
+	public void StartGame()
+	{
+		var randomVelocity = Vector2.Down.Rotated((float)(-Mathf.Pi * _rand.NextDouble()));
 
-    public void StartGame()
-    {
-        var randomVelocity = Vector2.Down.Rotated((float)(-Mathf.Pi * _rand.NextDouble()));
+		_velocity = randomVelocity.Normalized() * Speed;
+	}
 
-        _velocity = randomVelocity.Normalized() * Speed;
-    }
+	public void OnExitScreen()
+	{
+		EmitSignal("LeftScreen", Position);
+	}
 
-    public void OnExitScreen()
-    {
-        EmitSignal("LeftScreen", Position);
-    }
-
-    private void OnBallbodyEntered(object body)
-    {
-        GD.Print("Collided");
-        _velocity = new Vector2(-_velocity.x, _velocity.y);
-    }
+	private void OnBallbodyEntered(object body)
+	{
+		GD.Print("Collided");
+		_velocity = new Vector2(-_velocity.x, _velocity.y);
+	}
 }

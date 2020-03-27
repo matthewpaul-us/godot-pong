@@ -1,0 +1,49 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Quantum.otf" type="DynamicFontData" id=1]
+[ext_resource path="res://GUI.cs" type="Script" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 36
+extra_spacing_char = 3
+font_data = ExtResource( 1 )
+
+[node name="GUI" type="CanvasLayer"]
+script = ExtResource( 2 )
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_right = 40
+custom_constants/margin_top = 40
+custom_constants/margin_left = 40
+custom_constants/margin_bottom = 40
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+margin_left = 40.0
+margin_top = 40.0
+margin_right = 984.0
+margin_bottom = 560.0
+custom_constants/separation = 200
+alignment = 1
+
+[node name="PlayerScore" type="Label" parent="MarginContainer/HBoxContainer"]
+margin_left = 306.0
+margin_right = 371.0
+margin_bottom = 520.0
+size_flags_vertical = 5
+custom_fonts/font = SubResource( 1 )
+text = "172"
+align = 1
+
+[node name="EnemyScore" type="Label" parent="MarginContainer/HBoxContainer"]
+margin_left = 571.0
+margin_right = 637.0
+margin_bottom = 520.0
+size_flags_vertical = 5
+custom_fonts/font = SubResource( 1 )
+text = "-154"
+align = 1

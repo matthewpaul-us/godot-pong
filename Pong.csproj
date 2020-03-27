@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ball.cs" />
+    <Compile Include="Credits.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="GUI.cs" />
     <Compile Include="Main.cs" />

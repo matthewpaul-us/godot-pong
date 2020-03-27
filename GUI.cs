@@ -27,10 +27,23 @@ public class GUI : CanvasLayer
 	{
 		var label = GetNode<Label>("MarginContainer/VBoxContainer/MessageLabel");
 		label.Text = message;
-		label.Visible = true;
+		label.Modulate = new Color(1, 1, 1, 1);
+
+		// Must have this in here otherwise some wierd code tries to get tree when it's null
+		// on the scene change. I'm not sure what's going on honestly
+		if (IsQueuedForDeletion() || GetTree() == null)
+		{
+			return;
+		}
 
 		await ToSignal(GetTree().CreateTimer(timeToShow), "timeout");
 
-		label.Visible = false;
+		// We might be in another scene by this point. Best to be safe and not cause a crash
+		label.Modulate = new Color(1, 1, 1, 0);
+	}
+
+	private async void OnCreditsButtonPressed()
+	{
+		GetTree().ChangeScene("Credits.tscn");
 	}
 }

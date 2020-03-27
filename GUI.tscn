@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Quantum.otf" type="DynamicFontData" id=1]
 [ext_resource path="res://GUI.cs" type="Script" id=2]
@@ -10,6 +10,10 @@ font_data = ExtResource( 1 )
 
 [sub_resource type="DynamicFont" id=2]
 size = 38
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 30
 font_data = ExtResource( 1 )
 
 [node name="GUI" type="CanvasLayer"]
@@ -57,11 +61,21 @@ text = "-154"
 align = 1
 
 [node name="MessageLabel" type="Label" parent="MarginContainer/VBoxContainer"]
-margin_top = 261.0
+margin_top = 241.0
 margin_right = 944.0
-margin_bottom = 299.0
+margin_bottom = 279.0
 size_flags_horizontal = 3
 size_flags_vertical = 6
 custom_fonts/font = SubResource( 2 )
 text = "Player Wins"
 align = 1
+
+[node name="CreditsButton" type="Button" parent="MarginContainer/VBoxContainer"]
+margin_left = 407.0
+margin_top = 484.0
+margin_right = 536.0
+margin_bottom = 520.0
+size_flags_horizontal = 4
+custom_fonts/font = SubResource( 3 )
+text = "Credits"
+[connection signal="pressed" from="MarginContainer/VBoxContainer/CreditsButton" to="." method="OnCreditsButtonPressed"]
